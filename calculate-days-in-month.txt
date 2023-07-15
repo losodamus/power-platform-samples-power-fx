@@ -1,0 +1,26 @@
+With({
+    // Provided date
+    vDate: DateValue("2/15/2024")
+    },
+    With({
+        // Get first day of the month
+        vMonthFirst: DateValue(
+            $"{Month(vDate)}/1/{Year(vDate)}"
+        )
+        },
+        With({
+            // Move into next month
+            vMonthNext: (vMonthFirst + 32)
+            },
+            With({
+                // Get first day of month
+                firstOfNextMonth: DateValue(
+                    $"{Month(vMonthNext)}/1/{Year(vMonthNext)}"
+                )
+                },
+                // Get final day of last month
+                $"{Day(firstOfNextMonth - 1)}"
+            )
+        )
+    )
+)
