@@ -1,0 +1,19 @@
+Filter(
+    AddColumns(
+        Attendees, 
+        "SearchForNameFound", 
+            Not(
+                Len(
+                    LookUp(
+                        Split(Names, ";"), 
+                        Value = ddlFilterOnNames.SelectedText.Value
+                    ).Value
+                ) = 0
+            )
+    ),
+    SearchForNameFound = true ||
+    If(IsBlank(ddlFilterOnNames.SelectedText.Value),
+        true,
+        false
+    )
+)
