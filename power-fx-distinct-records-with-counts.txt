@@ -1,0 +1,38 @@
+With({
+    vFiltered: 
+        ShowColumns(
+            Filter(
+                'biz.MailingAddresses', // Datasource
+                StartsWith(
+                    Address, 
+                    "1234 P"
+                )
+            ),
+            "Address", 
+            "City"
+        )
+    },
+    With({
+        vGrouped: 
+            GroupBy(
+                vFiltered, 
+                "Address", // Column to group by
+                "GrpdFld" // Column of grouped table
+            )
+        },
+        SortByColumns(
+            FirstN(
+                AddColumns(
+                    vGrouped, 
+                    "NumberOf", 
+                    CountRows(
+                        ThisRecord.GrpdFld
+                    )
+                ),
+                15
+            ),
+            "Address", 
+            SortOrder.Ascending
+        )
+    )
+)
