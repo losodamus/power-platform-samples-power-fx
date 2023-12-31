@@ -1,0 +1,10 @@
+Concat(
+    ForAll(Sequence(32),
+        Switch(RandBetween(0, 2),
+            0, $"{ RandBetween(0, 9) }", // Numbers
+            1, $"{ Char(RandBetween(65, 90)) }", // Uppercase
+            2, $"{ Char(RandBetween(97, 122)) }" // Lowercase
+        )
+    ),
+    Value,""
+)
