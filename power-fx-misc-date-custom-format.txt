@@ -1,0 +1,11 @@
+With({
+    stringDate: Text(Now(), " dd, yyyy @ hh:mm AM/PM"),
+    indexMonth: Int(Month(Today())),
+    arrayOfMonths: [
+        "Jan.","Feb.","Mar.","Apr.",
+        "May","Jun.","Jul.","Aug.",
+        "Sep.","Oct.","Nov.","Dec."
+    ]
+},
+    Concatenate(Index(arrayOfMonths, indexMonth).Value, stringDate)
+)
