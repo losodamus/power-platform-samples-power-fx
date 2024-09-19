@@ -1,0 +1,246 @@
+With({ //  Exclude empty items
+    TableOfReponses: Filter(
+        AddColumns(
+            DropColumns(
+                RenameColumns(Table1, Question, Response), 
+                ID, 
+                Name, 
+                Email, 
+                'Start time', 
+                'Completion time', 
+                'Last modified time' 
+            ), 
+            Ranks, 
+            Filter(
+                Split(Response, ";"), 
+                Value <> "" 
+            ) 
+        ), 
+        Response <> "" 
+    ) 
+},
+    With({ 
+        VoteChoicesArray: Filter(
+            Split(
+                First(TableOfReponses).Response, 
+                ";" 
+            ), 
+            Value <> "" 
+        ), 
+        NumbOfVotesNeededToWin: RoundUp(
+            CountRows(TableOfReponses) / 2, 
+            0 
+        ) 
+    }, 
+        With({ //  Round #1
+            VoteCountsForRound01: SortByColumns(
+                AddColumns(
+                    VoteChoicesArray, 
+                    'Total', 
+                    CountIf(
+                        TableOfReponses, 
+                        First(ThisRecord.Ranks).Value = Value 
+                    ), 
+                    'Target',  
+                    NumbOfVotesNeededToWin 
+                ), 
+                "Total", 
+                SortOrder.Ascending 
+            ) 
+        },
+            With({ 
+                Round01Loser: First(VoteCountsForRound01).Value, 
+                Round01Winner: Last(VoteCountsForRound01).Value  
+            }, 
+                With({ //  Round #2
+                    VoteCountsForRound02: SortByColumns(
+                        AddColumns(
+                            Filter(
+                                VoteChoicesArray, 
+                                Not(Value = Round01Loser) 
+                            ), 
+                            'Total', 
+                            CountIf(
+                                TableOfReponses, 
+                                First(ThisRecord.Ranks).Value = Value || 
+                                (
+                                    First(ThisRecord.Ranks).Value = Round01Loser && 
+                                    Last(FirstN(ThisRecord.Ranks, 2)).Value = Value 
+                                )
+                            ), 
+                            'Target',  
+                            NumbOfVotesNeededToWin 
+                        ), 
+                        "Total", 
+                        SortOrder.Ascending 
+                    ) 
+                }, 
+                    With({ 
+                        Round02Loser: First(VoteCountsForRound02).Value, 
+                        Round02Winner: Last(VoteCountsForRound02).Value 
+                    }, 
+                        With({ //  Round #3
+                            VoteCountsForRound03: SortByColumns(
+                                AddColumns(
+                                Filter(
+                                    VoteChoicesArray, 
+                                    Not(
+                                        Value = Round01Loser || 
+                                        Value = Round02Loser 
+                                    ) 
+                                ), 
+                                    'Total', 
+                                    CountIf(
+                                        TableOfReponses, 
+                                        First(ThisRecord.Ranks).Value = Value || 
+                                        (
+                                            First(ThisRecord.Ranks).Value = Round01Loser && 
+                                            Last(FirstN(ThisRecord.Ranks, 2)).Value = Value 
+                                        ) || 
+                                        (
+                                            First(ThisRecord.Ranks).Value = Round02Loser && 
+                                            Last(FirstN(ThisRecord.Ranks, 2)).Value = Value 
+                                        ) 
+                                    ), 
+                                    'Target',  
+                                    NumbOfVotesNeededToWin 
+                                ), 
+                                "Total", 
+                                SortOrder.Ascending 
+                            ) 
+                        }, 
+                            With({ 
+                                Round03Loser: First(VoteCountsForRound03).Value, 
+                                Round03Winner: Last(VoteCountsForRound03).Value 
+                            }, 
+                                With({ //  Round #4
+                                    VoteCountsForRound04: SortByColumns(
+                                        AddColumns(
+                                        Filter(
+                                            VoteChoicesArray, 
+                                            Not(
+                                                Value = Round01Loser || 
+                                                Value = Round02Loser || 
+                                                Value = Round03Loser 
+                                            ) 
+                                        ), 
+                                            'Total', 
+                                            CountIf(
+                                                TableOfReponses, 
+                                                First(ThisRecord.Ranks).Value = Value || 
+                                                (
+                                                    First(ThisRecord.Ranks).Value = Round01Loser && 
+                                                    Last(FirstN(ThisRecord.Ranks, 2)).Value = Value 
+                                                ) || 
+                                                (
+                                                    First(ThisRecord.Ranks).Value = Round02Loser && 
+                                                    Last(FirstN(ThisRecord.Ranks, 2)).Value = Value 
+                                                ) || 
+                                                (
+                                                    First(ThisRecord.Ranks).Value = Round03Loser && 
+                                                    Last(FirstN(ThisRecord.Ranks, 2)).Value = Value 
+                                                ) 
+                                            ), 
+                                            'Target',  
+                                            NumbOfVotesNeededToWin 
+                                        ), 
+                                        "Total", 
+                                        SortOrder.Ascending 
+                                    ) 
+                                }, 
+                                    With({ 
+                                        Round04Loser: First(VoteCountsForRound04).Value, 
+                                        Round04Winner: Last(VoteCountsForRound04).Value 
+                                    }, 
+                                        With({ //  Round #5
+                                            VoteCountsForRound05: SortByColumns(
+                                                AddColumns(
+                                                Filter(
+                                                    VoteChoicesArray, 
+                                                    Not(
+                                                        Value = Round01Loser || 
+                                                        Value = Round02Loser || 
+                                                        Value = Round03Loser 
+                                                    ) 
+                                                ), 
+                                                    'Total', 
+                                                    CountIf(
+                                                        TableOfReponses, 
+                                                        First(ThisRecord.Ranks).Value = Value || 
+                                                        (
+                                                            First(ThisRecord.Ranks).Value = Round01Loser && 
+                                                            (
+                                                                Last(FirstN(ThisRecord.Ranks, 2)).Value = Value || 
+                                                                Last(FirstN(ThisRecord.Ranks, 3)).Value = Value
+                                                            )
+                                                        ) || 
+                                                        (
+                                                            First(ThisRecord.Ranks).Value = Round02Loser && 
+                                                            (
+                                                                Last(FirstN(ThisRecord.Ranks, 2)).Value = Value  || 
+                                                                Last(FirstN(ThisRecord.Ranks, 3)).Value = Value
+                                                            )
+                                                        ) || 
+                                                        (
+                                                            First(ThisRecord.Ranks).Value = Round03Loser && 
+                                                            (
+                                                                Last(FirstN(ThisRecord.Ranks, 2)).Value = Value  || 
+                                                                Last(FirstN(ThisRecord.Ranks, 3)).Value = Value
+                                                            )
+                                                        ) 
+                                                    ), 
+                                                    'Target',  
+                                                    NumbOfVotesNeededToWin 
+                                                ), 
+                                                "Total", 
+                                                SortOrder.Ascending 
+                                            ) 
+                                        }, 
+                                            With({ 
+                                                Round05Loser: First(VoteCountsForRound05).Value, 
+                                                Round05Winner: Last(VoteCountsForRound05).Value 
+                                            }, 
+                                                Table(
+                                                    {
+                                                        Round: 1,
+                                                        Dataset: VoteCountsForRound01, 
+                                                        Winner: Round01Winner, 
+                                                        Loser: Round01Loser 
+                                                    }, 
+                                                    {
+                                                        Round: 2,
+                                                        Dataset: VoteCountsForRound02, 
+                                                        Winner: Round02Winner, 
+                                                        Loser: Round02Loser 
+                                                    }, 
+                                                    {
+                                                        Round: 3,
+                                                        Dataset: VoteCountsForRound03, 
+                                                        Winner: Round03Winner, 
+                                                        Loser: Round03Loser 
+                                                    }, 
+                                                    {
+                                                        Round: 4,
+                                                        Dataset: VoteCountsForRound04, 
+                                                        Winner: Round04Winner, 
+                                                        Loser: Round04Loser 
+                                                    }, 
+                                                    {
+                                                        Round: 5,
+                                                        Dataset: VoteCountsForRound05, 
+                                                        Winner: Round05Winner, 
+                                                        Loser: Round05Loser 
+                                                    } 
+                                                ) 
+                                            ) 
+                                        ) 
+                                    ) 
+                                ) 
+                            ) 
+                        ) 
+                    ) 
+                ) 
+            ) 
+        ) 
+    ) 
+) 
