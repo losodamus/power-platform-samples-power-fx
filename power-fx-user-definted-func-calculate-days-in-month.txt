@@ -1,0 +1,11 @@
+calcDaysInMonth(
+    MM:Number, 
+    YYYY:Number
+):Number = IfError(
+    Date(
+        Year((Date(YYYY, MM, 1) + 45)), 
+        Month((Date(YYYY, MM, 1) + 45)), 
+        1
+    ) - Date(YYYY, MM, 1),
+    0
+);
