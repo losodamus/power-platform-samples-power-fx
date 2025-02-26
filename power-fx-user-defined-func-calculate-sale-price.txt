@@ -1,0 +1,9 @@
+calcSalePrice(
+    TotalCost:Number, 
+    PercentageOff:Number
+):Text = IfError(
+    Text(
+        TotalCost - (TotalCost * (PercentageOff / 100)), 
+        "$0.00"),
+    "00"
+); 

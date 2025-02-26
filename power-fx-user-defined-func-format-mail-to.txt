@@ -1,0 +1,36 @@
+formatMailToLink(
+    EmailTo:Text,
+    EmailCC:Text,
+    EmailBCC:Text,
+    Subject:Text,
+    Body:Text
+):Text = IfError(
+    Concatenate(
+        "<a href='mailto:",
+        Trim(EmailTo),
+        If(!IsBlank(EmailCC),
+            $"?cc={ Trim(EmailCC) }"
+        ),
+        If(!IsBlank(EmailBCC),
+            If(!IsBlank(EmailCC),
+                "&", "?"
+            ) & $"&bcc={ Trim(EmailBCC) }"
+        ),
+        If(!IsBlank(Subject),
+            If(!IsBlank(EmailCC) || 
+                !IsBlank(EmailBCC),
+                "&", "?"
+            ) & $"subject={ Substitute(Trim(Subject), " ", "%20") }"
+        ),
+        If(!IsBlank(Body),
+            If(!IsBlank(EmailCC) || 
+                !IsBlank(EmailBCC) || 
+                !IsBlank(Subject),
+                "&", "?"
+            ) & $"body={ Substitute(Trim(Body), " ", "%20") }"
+        ),
+        "'>",
+        Trim(EmailTo),
+        "</a>"),
+    "<a href=''>---</a>"
+); 

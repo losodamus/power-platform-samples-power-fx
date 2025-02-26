@@ -1,0 +1,16 @@
+formatTodayDate():Text = IfError(
+    Last(
+        FirstN(
+            Split("Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday", "|"),
+            Weekday(Now(), StartOfWeek.Sunday)
+        ).Value
+    ).Value &
+    ", " &
+    Last(
+        FirstN(
+            Split("Jan.|Feb.|Mar.|Apr.|May|Jun.|Jul.|Aug.|Sep.|Oct.|Nov.|Dec.", "|"),
+            Month(Now())
+        ).Value
+    ).Value & $" { Day(Now()) }, { Year(Now()) }",
+    ""
+);
