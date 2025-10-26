@@ -1,0 +1,26 @@
+ClearCollect(
+    indexOfMonths, 
+    Sequence(Month(Self.SelectedDate) - 1)
+);
+
+ClearCollect(
+    countNumDaysPerMonth, 
+    ForAll(
+        indexOfMonths, { 
+            IndexOfMonth: ThisRecord.Value, 
+            DaysInMonth: With({
+                vDate: DateValue($"{ ThisRecord.Value }/1/{ Year(Self.SelectedDate) }") + 45
+                },
+                Day(DateValue($"{ Month(vDate) }/1/{ Year(vDate) }") - 1)
+            )
+        }
+    )
+);
+
+Set(
+    vNumOfDays, 
+    Sum(
+        countNumDaysPerMonth, 
+        ThisRecord.DaysInMonth
+    ) + Day(Self.SelectedDate)
+);
