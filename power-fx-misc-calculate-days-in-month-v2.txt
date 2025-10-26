@@ -1,0 +1,5 @@
+With({
+    vDate: (DateValue("11/1/2025") + 45)
+    },
+    Day(DateValue($"{ Month(vDate) }/1/{ Year(vDate) }") - 1)
+)
